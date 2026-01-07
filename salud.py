@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFIGURACIÓN
 # ═══════════════════════════════════════════════════════════════════════════
-st.set_page_config(page_title="Journey 2026", page_icon="✨", layout="wide")
+st.set_page_config(page_title="Journey 2026", page_icon="✨", laDiegout="wide")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ESTILOS CSS
@@ -171,11 +171,11 @@ def init_db():
                   momento TEXT, comida TEXT)''')
     
     # Crear usuarios si no existen
-    c.execute("INSERT OR IGNORE INTO usuarios (nombre) VALUES ('Yo')")
-    c.execute("INSERT OR IGNORE INTO usuarios (nombre) VALUES ('Mi Amigo')")
+    c.execute("INSERT OR IGNORE INTO usuarios (nombre) VALUES ('Diego')")
+    c.execute("INSERT OR IGNORE INTO usuarios (nombre) VALUES ('Manu')")
     
     # Hábitos por defecto si no existen
-    c.execute("SELECT COUNT(*) FROM habitos_config WHERE usuario = 'Yo'")
+    c.execute("SELECT COUNT(*) FROM habitos_config WHERE usuario = 'Diego'")
     if c.fetchone()[0] == 0:
         habitos_default = [
             ("Entrenar", "🏋️"),
@@ -186,9 +186,9 @@ def init_db():
         ]
         for hab, emoji in habitos_default:
             c.execute("INSERT INTO habitos_config (usuario, habito, emoji) VALUES (?, ?, ?)",
-                     ('Yo', hab, emoji))
+                     ('Diego', hab, emoji))
             c.execute("INSERT INTO habitos_config (usuario, habito, emoji) VALUES (?, ?, ?)",
-                     ('Mi Amigo', hab, emoji))
+                     ('Manu', hab, emoji))
     
     conn.commit()
     conn.close()
@@ -330,7 +330,7 @@ st.markdown("""
 col1, col2, col3 = st.columns([2, 2, 3])
 
 with col1:
-    usuario = st.selectbox("👤 Usuario", ["Yo", "Mi Amigo"])
+    usuario = st.selectbox("👤 Usuario", ["Diego", "Manu"])
 
 with col2:
     fecha = st.date_input("📅 Fecha", datetime.now())
@@ -360,7 +360,7 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════════════════
 # TABS
 # ═══════════════════════════════════════════════════════════════════════════
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["📝 Registro", "📊 Progreso", "🍽️ Meal Prep", "🏆 Logros", "⚙️ Configuración"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📝 Registro", "📊 Progreso", "🍽️ Menú semanal", "🏆 Logros", "⚙️ Configuración del usuario"])
 
 # ═══════════════════════════════════════════════════════════════════════════
 # TAB 1: REGISTRO DIARIO
@@ -427,7 +427,7 @@ with tab1:
         # ═══════════════════════════════════════════════════════════════════
         st.subheader("🍽️ Comidas del Día")
         
-        momentos = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
+        momentos = ["Desayuno", "Almuerzo", "Merienda", "Cena", "Extra"]
         comidas_data = []
         
         for momento in momentos:
@@ -532,7 +532,7 @@ with tab2:
             fig_peso.add_hline(y=peso_obj, line_dash="dash", line_color="red", 
                               annotation_text="Objetivo")
         
-        fig_peso.update_layout(
+        fig_peso.update_laDiegout(
             height=300,
             margin=dict(l=20, r=20, t=20, b=20),
             xaxis_title="", yaxis_title="Peso (kg)",
@@ -551,7 +551,7 @@ with tab2:
             marker=dict(size=8),
             fill='tozeroy'
         ))
-        fig_sueno.update_layout(
+        fig_sueno.update_laDiegout(
             height=300,
             margin=dict(l=20, r=20, t=20, b=20),
             xaxis_title="", yaxis_title="Horas",
@@ -587,13 +587,13 @@ with tab3:
                     comida = st.text_input(
                         dia, 
                         value=default_val,
-                        placeholder="Ej: Avena",
+                        placeholder="Ej: Tostadas con huevo revuelto",
                         label_visibility="visible",
                         key=f"meal_{momento}_{dia}"
                     )
                     meal_data[f"{dia}_{momento}"] = comida
         
-        submitted_meal = st.form_submit_button("💾 Guardar Meal Prep", use_container_width=True)
+        submitted_meal = st.form_submit_button("💾 Guardar Menú", use_container_width=True)
         
         if submitted_meal:
             conn = sqlite3.connect(DB)
@@ -665,7 +665,7 @@ with tab4:
     
     col_comp1, col_comp2 = st.columns(2)
     
-    for idx, usr in enumerate(["Yo", "Mi Amigo"]):
+    for idx, usr in enumerate(["Diego", "Manu"]):
         df_usr = get_data("SELECT nivel, xp FROM usuarios WHERE nombre = ?", (usr,))
         nivel_usr = df_usr.iloc[0]['nivel']
         xp_usr = df_usr.iloc[0]['xp']
@@ -822,4 +822,5 @@ with tab5:
                 promedio = df_stats_hab.iloc[0]['total'] / df_stats_reg.iloc[0]['total']
                 st.metric("Promedio hábitos/día", f"{promedio:.1f}")
             else:
+
                 st.metric("Promedio hábitos/día", "0.0")
