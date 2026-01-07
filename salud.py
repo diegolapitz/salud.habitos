@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 # ═══════════════════════════════════════════════════════════════════════════
 # CONFIGURACIÓN
 # ═══════════════════════════════════════════════════════════════════════════
-st.set_page_config(page_title="Journey 2026", page_icon="✨", laDiegout="wide")
+st.set_page_config(page_title="Journey 2026", page_icon="✨", layout="wide")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ESTILOS CSS
@@ -824,3 +824,4 @@ with tab5:
             else:
 
                 st.metric("Promedio hábitos/día", "0.0")
+
